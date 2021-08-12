@@ -9,7 +9,7 @@ const logLevels = {
   verbose: 3
 }
 
-const validateSchema =  (targetObject, options = {}) => {
+const validateSchema = (targetObject, options = {}) => {
   if(!targetObject)
     return logger.error('Missing argument: either targetObject or filePath is required')
   let isPath = typeof targetObject === 'string'
@@ -28,8 +28,12 @@ const validateSchema =  (targetObject, options = {}) => {
     const content = isPath ? utils.loadContent(targetObject) : targetObject
     const clone = JSON.parse(JSON.stringify(content))
     const misMatches = new Schema(schema).validate(content).map(err => ({path: err.path, message: err.message}))
-    const extraFiels = validateExtraFields(clone, schema)
-    return printErrors(misMatches, extraFiels, logLevels[options.logLevel])
+    const extraFields = validateExtraFields(clone, schema)
+    printErrors(misMatches, extraFields, logLevels[options.logLevel]);
+    return {
+      errors: misMatches || [],
+      warnings: extraFields || []
+    };
   } catch (error) {
     logger.error(error)
   }

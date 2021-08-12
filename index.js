@@ -16,7 +16,9 @@ program
   .action((options) => {
     const targetObj = options.targetObj ? JSON.parse(options.targetObj) : options.filePath
     const errorsAndWarnings = validateSchema(targetObj, options)
-    if (options.exitOnErr && errorsAndWarnings && errorsAndWarnings.length > 0) {
+    if (options.exitOnErr 
+      && (errorsAndWarnings.errors.length > 0
+      || errorsAndWarnings.warnings.length > 0)) {
       process.exit(1)
     }
   });
